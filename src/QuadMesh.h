@@ -103,6 +103,19 @@ public:
 		xml.saveFile(xmlpath);
 	}
 	
+	void incrResolution()
+	{
+		resolution_++;
+		createMesh();
+	}
+
+	void decrResolution()
+	{
+		if ( resolution_ <= 1 ) return;
+
+		resolution_--;
+		createMesh();
+	}
 
 	ofVec2f vertex_[4];
 
