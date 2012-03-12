@@ -37,6 +37,9 @@ void testApp::setup(){
 
 	quadimage.loadImage("1.jpg");
 	quadtexture = genTex(quadimage.getWidth(), quadimage.getHeight(), quadimage.getPixels());
+
+	// if use GL_TEXTURE_RECTANGLE, change texture coord from [1,1] to [width, height]
+	//quadmesh.ResetTextureCoords(quadimage.getWidth(), quadimage.getHeight());
 }
 
 //--------------------------------------------------------------
@@ -47,8 +50,10 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	ofBackground(0);
-	quadmesh.renderMesh(quadtexture);
+	ofBackground(0); 
+	quadmesh.renderMesh(GL_TEXTURE_2D, quadtexture);
+	// render GL_TEXTURE_RECTANGLE
+	//quadmesh.renderMesh(GL_TEXTURE_RECTANGLE, quadimage.getTextureReference().texData.textureID);
 	quadmesh.renderWirframes();
 }
 
