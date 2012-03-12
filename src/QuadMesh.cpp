@@ -1,5 +1,5 @@
 #include "QuadMesh.h"
-
+#include "MeshIndexCreator.h"
 
 QuadMesh::QuadMesh(void)
 {
@@ -19,6 +19,8 @@ void QuadMesh::create(int x, int y, int w, int h, int res)
 
 	resolution_ = res;
 
+	texture_width = 1.0; 
+	texture_height = 1.0;
 	/*
 	 *	ofMesh default render is OF_PRIMITIVE_TRIANGLES, 
 	 *	OF_PRIMITIVE_TRIANGLE_STRIP will have less indices
@@ -51,6 +53,12 @@ void QuadMesh::createMesh()
 	}
 	vector<unsigned int> index = MeshIndexCreator::createTriangleMeshIndex(resolution_, resolution_);
 	mesh_.addIndices(index);
+
+	ResetTextureCoords(texture_height, texture_width);
+	/*
+	 *	not commit bTexCoordsChanged so call twice
+	 */
+	ResetTextureCoords(texture_height, texture_width);
 }
 
 void QuadMesh::updateMesh()
@@ -67,6 +75,26 @@ void QuadMesh::updateMesh()
 
 			ofVec3f p3t = ofVec3f(pt.x, pt.y, 0);
 			mesh_.setVertex(i*(resolution_+1)+j, p3t);
+		}
+	}
+}
+
+void QuadMesh::ResetTextureCoords(float w, float h)
+{
+	texture_width = w; 
+	texture_height = h;
+	for ( int i = 0; i <= resolution_; i++ )	// y
+	{
+		for ( int j = 0; j <= resolution_; j++ )	// x
+		{
+			ofVec2f pt = (vertex_[0] + (vertex_[3]-vertex_[0])*(float)i/resolution_)
+				+ (
+				(vertex_[1]-(vertex_[1]-vertex_[2])*(float)i/resolution_)
+				-(vertex_[0] + (vertex_[3]-vertex_[0])*(float)i/resolution_)
+				)*(float)j/resolution_;
+
+			ofVec2f t2t = ofVec2f((float)j/resolution_*texture_width, (float)i/resolution_*texture_height);
+			mesh_.setTexCoord(i*(resolution_+1)+j, t2t);
 		}
 	}
 }

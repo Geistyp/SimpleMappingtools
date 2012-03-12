@@ -6,8 +6,6 @@
 #include "ofMain.h"
 #include "ofxXmlSettings.h"
 
-#include "MeshIndexCreator.h"
-
 /*
  *	Quad mesh creator
  */
@@ -40,6 +38,12 @@ public:
 		updateMesh();
 	}
 
+	/*
+	 *	Reset texture coordinate
+	 *	eg. GL_TEXTURE_2D (1,1) 
+	 *		GL_TEXTURE_RECTANGLE (texture_width,texture_height)
+	 */
+	void ResetTextureCoords(float w, float h);
 	//////////////////////////////////////////////////////////////////////////
 	/*
 	 *	create mesh & indices
@@ -52,16 +56,17 @@ public:
 
 	/*
 	 *	render mesh texture
-	 *	tid : render texture - GL_TEXTURE_2D
+	 *	type: texture type (eg.GL_TEXTURE_2D)
+	 *	tid : render texture
 	 */
-	void renderMesh(GLuint tid)
+	void renderMesh(GLenum type, GLuint tid)
 	{
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, tid);
+		glEnable(type);
+		glBindTexture(type, tid);
 
 		mesh_.drawFaces();
 
-		glDisable(GL_TEXTURE_2D);
+		glDisable(type);
 	}
 	/*
 	 *	render wirframes (white)
@@ -79,6 +84,8 @@ public:
 		if ( !xml.loadFile(xmlpath) ) return;
 
 		resolution_ = xml.getValue("resolution", 1);
+		texture_width = xml.getValue("texture_width", 1.0);
+		texture_height = xml.getValue("texture_height", 1.0);
 
 		for ( int i = 0; i < 4; i++ )
 		{
@@ -94,6 +101,9 @@ public:
 		ofxXmlSettings xml;
 
 		xml.setValue("resolution", resolution_);
+
+		xml.setValue("texture_width", texture_width);
+		xml.setValue("texture_height", texture_height);
 
 		for ( int i = 0; i < 4; i ++ )
 		{
@@ -125,5 +135,6 @@ public:
 
 	ofxXmlSettings xml_;
 
+	float texture_width, texture_height;
 };
 
