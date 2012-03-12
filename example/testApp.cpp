@@ -63,6 +63,8 @@ void testApp::keyPressed(int key){
 	{
 		quadmesh.load("quad.xml");
 	}
+	if ( key == '+' )	quadmesh.incrResolution();
+	if ( key == '-' )	quadmesh.decrResolution();
 }
 
 //--------------------------------------------------------------
